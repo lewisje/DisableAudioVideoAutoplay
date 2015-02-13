@@ -36,7 +36,7 @@ var arVideos = document.getElementsByTagName('video'), arAudio = document.getEle
 for (i = vl - 1; i >= 0; i--) arVideos[i].autoplay = false;
 for (i = al - 1; i >= 0; i--) arAudio[i].autoplay = false;
 
-// attempted workaround for modern YouTube, except on playlists, based on https://greasyfork.org/en/scripts/6487-pause-all-html5-videos-on-load
+// attempted workaround for Vine and modern YouTube, except on YouTube playlists, based on https://greasyfork.org/en/scripts/6487-pause-all-html5-videos-on-load
 if (!loc.match(/^https?\:\/\/(\w+\.)?youtube\.com\/watch\?.*list=[A-Z]/i)) {
   stopVideo = function stopVideo() {
     'use strict';
