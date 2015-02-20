@@ -85,9 +85,9 @@ if (loc.match(/^https?\:\/\/(?:\w+\.)*tumblr\.com[\:\/]/i))
     var autoPlay, i;
     for (i = el - 1; i >= 0; i--) {
       autoPlay = arEmbeds[i];
-	  	if (autoPlay && autoPlay.src.match(/autoplay=true/gi)) {
-			  autoPlay.src = autoPlay.src.replace(/autoplay=true/gi, 'autoplay=false');
-			  nodeRefresh(autoPlay);
-		  }
-	  }
+      if (autoPlay && autoPlay.src.match(/autoplay=true/gi)) {
+        autoPlay.src = autoPlay.src.replace(/autoplay=true/gi, 'autoplay=false');
+        nodeRefresh(autoPlay);
+      }
+    }
   });
