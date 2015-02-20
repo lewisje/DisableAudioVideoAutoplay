@@ -6,7 +6,7 @@
 // @icon http://diveintohtml5.info/favicon.ico
 // @include *
 // @grant none
-// @version 1.1.1
+// @version 1.1.2
 // @run-at document-end
 // @copyright 2015 James Edward Lewis II
 // ==/UserScript==
@@ -40,13 +40,13 @@ var arVideos = document.getElementsByTagName('video'), arAudio = document.getEle
    var orig = nod.style.display;
    nod.style.display = (orig === 'none') ? 'block' : 'none';
    nod.style.display = orig;
- }, i;
+ }, stopVideo, i;
 for (i = vl - 1; i >= 0; i--) arVideos[i].autoplay = false;
 for (i = al - 1; i >= 0; i--) arAudio[i].autoplay = false;
 
 // attempted workaround for Vine and modern YouTube, except on YouTube playlists, based on https://greasyfork.org/en/scripts/6487-pause-all-html5-videos-on-load
-if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watch\?.*list=[A-Z]/i))
-  cb_load(function stopVideo() {
+if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watch\?.*list=[A-Z]/i)) {
+  stopVideo = function stopVideo() {
     'use strict';
     var autoPlay, i;
     for (i = vl - 1; i >= 0; i--) {
@@ -65,7 +65,10 @@ if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watc
         nodeRefresh(autoPlay);
       }
     }
-  });
+  };
+  if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com[\:\/]/i) || !vl) cb_load(stopVideo);
+  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 1000)});
+}
 
 // attempted workaround for old Flash-based YouTube, for older browsers, based on http://userscripts-mirror.org/scripts/review/100858
 if (loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com[\:\/]/i) && loc.indexOf('list=') === -1 && !vl && ytVars)
