@@ -6,11 +6,14 @@
 // @icon http://diveintohtml5.info/favicon.ico
 // @include *
 // @grant none
-// @version 1.1
+// @version 1.1.1
 // @run-at document-end
 // @copyright 2015 James Edward Lewis II
 // ==/UserScript==
-var arVideos = document.getElementsByTagName('video'), arAudio = document.getElementsByTagName('audio'), vl = arVideos.length, al=arAudio.length, loc = window.document.location.toString(), ytPlayer = document.getElementById('movie_player'), ytVars = (ytPlayer != null) ? ytPlayer.getAttribute('flashvars') : '', cb_load = function cb_load(fnc) { // Just for those who still use IE7Pro: IE8 and earlier do not support addEventListener
+var arVideos = document.getElementsByTagName('video'), arAudio = document.getElementsByTagName('audio'), vl = arVideos.length,
+ al = arAudio.length, loc = window.document.location.toString(), ytPlayer = document.getElementById('movie_player'),
+ ytVars = ytPlayer ? ytPlayer.getAttribute('flashvars') : '', arEmbeds = document.getElementsByTagName('embed'),
+ el = arEmbeds.length, cb_load = function cb_load(fnc) { // Just for those who still use IE7Pro: IE8 and earlier do not support addEventListener
   'use strict';
   if (window.addEventListener) { // W3C model
     window.addEventListener('load', fnc, false);
@@ -32,34 +35,59 @@ var arVideos = document.getElementsByTagName('video'), arAudio = document.getEle
     return true;
   }
   return false;
- }, i, stopVideo, stopOldYT;
+ }, nodeRefresh = function nodeRefresh(nod) {
+   'use strict';
+   var orig = nod.style.display;
+   nod.style.display = (orig === 'none') ? 'block' : 'none';
+   nod.style.display = orig;
+ }, i;
 for (i = vl - 1; i >= 0; i--) arVideos[i].autoplay = false;
 for (i = al - 1; i >= 0; i--) arAudio[i].autoplay = false;
 
 // attempted workaround for Vine and modern YouTube, except on YouTube playlists, based on https://greasyfork.org/en/scripts/6487-pause-all-html5-videos-on-load
-if (!loc.match(/^https?\:\/\/(\w+\.)?youtube\.com\/watch\?.*list=[A-Z]/i)) {
-  stopVideo = function stopVideo() {
+if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watch\?.*list=[A-Z]/i))
+  cb_load(function stopVideo() {
     'use strict';
-    var i;
+    var autoPlay, i;
     for (i = vl - 1; i >= 0; i--) {
-      arVideos[i].pause();
-      arVideos[i].currentTime = 0;
+      autoPlay = arVideos[i];
+      if (autoPlay) {
+        autoPlay.pause();
+        autoPlay.currentTime = 0;
+        nodeRefresh(autoPlay);
+      }
     }
     for (i = al - 1; i >= 0; i--) {
-      arAudio[i].pause();
-      arAudio[i].currentTime = 0;
+      autoPlay = arAudio[i];
+      if (autoPlay) {
+        autoPlay.pause();
+        autoPlay.currentTime = 0;
+        nodeRefresh(autoPlay);
+      }
     }
-  };
-  cb_load(stopVideo);
-}
+  });
 
 // attempted workaround for old Flash-based YouTube, for older browsers, based on http://userscripts-mirror.org/scripts/review/100858
-if (loc.match(/https?\:\/\/(\w+\.)?youtube\.com\/.*/i) && loc.indexOf('list=') === -1 && !vl && ytVars) {
-  stopOldYT = function stopOldYT() {
+if (loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com[\:\/]/i) && loc.indexOf('list=') === -1 && !vl && ytVars)
+  cb_load(function stopOldYT() {
     'use strict';
     // in video page : profile page
     ytPlayer.setAttribute('flashvars', (loc.indexOf('/watch') !== -1) ? 'autoplay=0&' + ytVars : ytVars.replace(/autoplay=1/i, 'autoplay=0'));
     ytPlayer.src += (ytPlayer.src.indexOf('#') === -1) ? '#' : '&autoplay=0';
-  };
-  cb_load(stopOldYT);
-}
+    nodeRefresh(ytPlayer);
+  });
+
+// attempted workaround for Billy-based video players on Tumblr, based on https://greasyfork.org/en/scripts/921-tumblr-disable-autoplay
+// which is also the source of all the CSSOM tomfoolery elsewhere in this script
+if (loc.match(/^https?\:\/\/(?:\w+\.)*tumblr\.com[\:\/]/i))
+  cb_load(function stopBillyTumblr() {
+    'use strict';
+    var autoPlay, i;
+    for (i = el - 1; i >= 0; i--) {
+      autoPlay = arEmbeds[i];
+	  	if (autoPlay && autoPlay.src.match(/autoplay=true/gi)) {
+			  autoPlay.src = autoPlay.src.replace(/autoplay=true/gi, 'autoplay=false');
+			  nodeRefresh(autoPlay);
+		  }
+	  }
+  });
