@@ -6,7 +6,7 @@
 // @icon http://diveintohtml5.info/favicon.ico
 // @include *
 // @grant none
-// @version 1.1.8
+// @version 1.1.9
 // @run-at document-end
 // @copyright 2015 James Edward Lewis II
 // ==/UserScript==
@@ -53,9 +53,10 @@ for (i = al - 1; i >= 0; i--) arAudio[i].autoplay = false;
 if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watch\?.*list=[A-Z]/i)) {
   stopVideo = function stopVideo() {
     'use strict';
-    var autoPlay, i, vidStopper = function vidStopper() {vidStop(autoPlay);};
-    if (ytPause && ytPause[0]) ytPause.click(); // This comes from Stop Youtube HTML5 Autoplay by Leslie P. Polzer of PORT ZERO <polzer@port-zero.com>: http://www.port-zero.com/en/chrome-plugin-stop-html5-autoplay/
-    else {
+    var autoPlay, i, yl = ytPause ? +ytPause.length : 0, vidStopper = function vidStopper() {vidStop(autoPlay);};
+    if (yl) { // This comes from Stop Youtube HTML5 Autoplay by Leslie P. Polzer of PORT ZERO <polzer@port-zero.com>: http://www.port-zero.com/en/chrome-plugin-stop-html5-autoplay/
+      for (i = yl - 1; i >= 0; i--) ytPause[i].click();
+    } else {
       for (i = vl - 1; i >= 0; i--) {
         autoPlay = arVideos[i];
         if (autoPlay && autoPlay.readyState === 4) {
