@@ -6,7 +6,7 @@
 // @icon http://diveintohtml5.info/favicon.ico
 // @include *
 // @grant none
-// @version 1.1.9
+// @version 1.2.0
 // @run-at document-end
 // @copyright 2015 James Edward Lewis II
 // ==/UserScript==
@@ -82,7 +82,7 @@ if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watc
     }
   };
   if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com[\:\/]/i) || !vl) cb_load(stopVideo);
-  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 2000);});
+  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 0);});
 }
 
 // attempted workaround for old Flash-based YouTube, for older browsers, based on http://userscripts-mirror.org/scripts/review/100858
@@ -91,7 +91,7 @@ if (loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com[\:\/]/i) && loc
     ytPlayer.setAttribute('flashvars', (loc.indexOf('/watch') !== -1) ? 'autoplay=0&' + ytVars : ytVars.replace(/autoplay=1/i, 'autoplay=0'));
     ytPlayer.src += (ytPlayer.src.indexOf('#') === -1) ? '#' : '&autoplay=0';
     nodeRefresh(ytPlayer);
-  }, 2000);});
+  }, 0);});
 
 // attempted workaround for Billy-based video players on Tumblr, based on https://greasyfork.org/en/scripts/921-tumblr-disable-autoplay
 // which is also the source of all the CSSOM tomfoolery elsewhere in this script
