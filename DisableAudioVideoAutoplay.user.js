@@ -6,7 +6,7 @@
 // @icon http://diveintohtml5.info/favicon.ico
 // @include *
 // @grant none
-// @version 1.1.7
+// @version 1.1.8
 // @run-at document-end
 // @copyright 2015 James Edward Lewis II
 // ==/UserScript==
@@ -43,7 +43,8 @@ var arVideos = document.getElementsByTagName('video'), arAudio = document.getEle
  }, vidStop = function vidStop(vid) {
    'use strict';
    vid.pause();
-   vid.oncanplay = vid.onplay = null;
+   vid.oncanplay = null;
+   vid.onplay = null;
  }, stopVideo, i;
 for (i = vl - 1; i >= 0; i--) arVideos[i].autoplay = false;
 for (i = al - 1; i >= 0; i--) arAudio[i].autoplay = false;
@@ -61,7 +62,10 @@ if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watc
           vidStop(autoPlay);
           autoPlay.currentTime = 0;
           nodeRefresh(autoPlay);
-        } else autoPlay.oncanplay = autoPlay.onplay = vidStopper;
+        } else {
+         autoPlay.oncanplay = vidStopper;
+         autoPlay.onplay = vidStopper;
+        }
       }
       for (i = al - 1; i >= 0; i--) {
         autoPlay = arAudio[i];
@@ -69,12 +73,15 @@ if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watc
           vidStop(autoPlay);
           autoPlay.currentTime = 0;
           nodeRefresh(autoPlay);
-        } else autoPlay.oncanplay = autoPlay.onplay = vidStopper;
+        } else {
+         autoPlay.oncanplay = vidStopper;
+         autoPlay.onplay = vidStopper;
+        }
       }
     }
   };
   if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com[\:\/]/i) || !vl) cb_load(stopVideo);
-  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 1000);});
+  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 2000);});
 }
 
 // attempted workaround for old Flash-based YouTube, for older browsers, based on http://userscripts-mirror.org/scripts/review/100858
