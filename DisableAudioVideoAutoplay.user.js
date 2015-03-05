@@ -6,7 +6,7 @@
 // @icon http://diveintohtml5.info/favicon.ico
 // @include *
 // @grant none
-// @version 1.1.3
+// @version 1.1.4
 // @run-at document-end
 // @copyright 2015 James Edward Lewis II
 // ==/UserScript==
@@ -14,7 +14,7 @@ var arVideos = document.getElementsByTagName('video'), arAudio = document.getEle
  al = arAudio.length, loc = window.document.location.toString(), ytPlayer = document.getElementById('movie_player'),
  ytVars = ytPlayer ? ytPlayer.getAttribute('flashvars') : '', arEmbeds = document.getElementsByTagName('embed'),
  el = arEmbeds.length, ytPause = document.getElementsByClassName('ytp-button-pause'),
- cb_load = function cb_load(fnc) { // Just for those who still use IE7Pro: IE8 and earlier do not support addEventListener
+ cb_load = function cb_load(fnc) { // Just for those who still use IE7Pro; IE8 and earlier do not support addEventListener: https://gist.github.com/eduardocereto/955642
   'use strict';
   if (window.addEventListener) { // W3C model
     window.addEventListener('load', fnc, false);
