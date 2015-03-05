@@ -13,7 +13,8 @@
 var arVideos = document.getElementsByTagName('video'), arAudio = document.getElementsByTagName('audio'), vl = arVideos.length,
  al = arAudio.length, loc = window.document.location.toString(), ytPlayer = document.getElementById('movie_player'),
  ytVars = ytPlayer ? ytPlayer.getAttribute('flashvars') : '', arEmbeds = document.getElementsByTagName('embed'),
- el = arEmbeds.length, cb_load = function cb_load(fnc) { // Just for those who still use IE7Pro: IE8 and earlier do not support addEventListener
+ el = arEmbeds.length, ytPause = document.getElementsByClassName('ytp-button-pause'),
+ cb_load = function cb_load(fnc) { // Just for those who still use IE7Pro: IE8 and earlier do not support addEventListener
   'use strict';
   if (window.addEventListener) { // W3C model
     window.addEventListener('load', fnc, false);
@@ -40,6 +41,10 @@ var arVideos = document.getElementsByTagName('video'), arAudio = document.getEle
    var orig = nod.style.display;
    nod.style.display = (orig === 'none') ? 'block' : 'none';
    nod.style.display = orig;
+ }, vidStop = function vidStop(vid) {
+   'use strict';
+   vid.pause();
+   vid.oncanplay = vid.onplay = null;
  }, stopVideo, i;
 for (i = vl - 1; i >= 0; i--) arVideos[i].autoplay = false;
 for (i = al - 1; i >= 0; i--) arAudio[i].autoplay = false;
@@ -49,25 +54,29 @@ if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watc
   stopVideo = function stopVideo() {
     'use strict';
     var autoPlay, i;
-    for (i = vl - 1; i >= 0; i--) {
-      autoPlay = arVideos[i];
-      if (autoPlay) {
-        autoPlay.pause();
-        autoPlay.currentTime = 0;
-        nodeRefresh(autoPlay);
+    if (ytPause && ytPause[0]) { // This comes from Stop Youtube HTML5 Autoplay by Leslie P. Polzer of PORT ZERO <polzer@port-zero.com>: http://www.port-zero.com/en/chrome-plugin-stop-html5-autoplay/
+      ytPause.click();
+    } else {
+      for (i = vl - 1; i >= 0; i--) {
+        autoPlay = arVideos[i];
+        if (autoPlay && autoPlay.readyState === 4) {
+          vidStop(autoPlay);
+          autoPlay.currentTime = 0;
+          nodeRefresh(autoPlay);
+        } else autoPlay.oncanplay = autoPlay.onplay = function vidStopper() {vidStop(autoPlay);};
       }
-    }
-    for (i = al - 1; i >= 0; i--) {
-      autoPlay = arAudio[i];
-      if (autoPlay) {
-        autoPlay.pause();
-        autoPlay.currentTime = 0;
-        nodeRefresh(autoPlay);
+      for (i = al - 1; i >= 0; i--) {
+        autoPlay = arAudio[i];
+        if (autoPlay && autoPlay.readyState === 4) {
+          vidStop(autoPlay);
+          autoPlay.currentTime = 0;
+          nodeRefresh(autoPlay);
+        } else autoPlay.oncanplay = autoPlay.onplay = function vidStopper() {vidStop(autoPlay);};
       }
     }
   };
   if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com[\:\/]/i) || !vl) cb_load(stopVideo);
-  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 2000);});
+  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 500);});
 }
 
 // attempted workaround for old Flash-based YouTube, for older browsers, based on http://userscripts-mirror.org/scripts/review/100858
