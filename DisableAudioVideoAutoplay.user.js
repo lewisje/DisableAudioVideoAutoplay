@@ -6,7 +6,7 @@
 // @icon http://diveintohtml5.info/favicon.ico
 // @include *
 // @grant none
-// @version 1.1.6
+// @version 1.1.7
 // @run-at document-end
 // @copyright 2015 James Edward Lewis II
 // ==/UserScript==
@@ -74,7 +74,7 @@ if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watc
     }
   };
   if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com[\:\/]/i) || !vl) cb_load(stopVideo);
-  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 500);});
+  else cb_load(function delayedYTstop() {'use strict'; setTimeout(stopVideo, 1000);});
 }
 
 // attempted workaround for old Flash-based YouTube, for older browsers, based on http://userscripts-mirror.org/scripts/review/100858
