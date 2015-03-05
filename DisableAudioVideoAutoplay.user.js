@@ -6,7 +6,7 @@
 // @icon http://diveintohtml5.info/favicon.ico
 // @include *
 // @grant none
-// @version 1.1.5
+// @version 1.1.6
 // @run-at document-end
 // @copyright 2015 James Edward Lewis II
 // ==/UserScript==
@@ -35,7 +35,6 @@ var arVideos = document.getElementsByTagName('video'), arAudio = document.getEle
     window.onload = fnc;
     return true;
   }
-  return false;
  }, nodeRefresh = function nodeRefresh(nod) {
    'use strict';
    var orig = nod.style.display;
@@ -53,7 +52,7 @@ for (i = al - 1; i >= 0; i--) arAudio[i].autoplay = false;
 if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watch\?.*list=[A-Z]/i)) {
   stopVideo = function stopVideo() {
     'use strict';
-    var autoPlay, i;
+    var autoPlay, i, vidStopper = function vidStopper() {vidStop(autoPlay);};
     if (ytPause && ytPause[0]) ytPause.click(); // This comes from Stop Youtube HTML5 Autoplay by Leslie P. Polzer of PORT ZERO <polzer@port-zero.com>: http://www.port-zero.com/en/chrome-plugin-stop-html5-autoplay/
     else {
       for (i = vl - 1; i >= 0; i--) {
@@ -62,7 +61,7 @@ if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watc
           vidStop(autoPlay);
           autoPlay.currentTime = 0;
           nodeRefresh(autoPlay);
-        } else autoPlay.oncanplay = autoPlay.onplay = function vidStopper() {vidStop(autoPlay);};
+        } else autoPlay.oncanplay = autoPlay.onplay = vidStopper;
       }
       for (i = al - 1; i >= 0; i--) {
         autoPlay = arAudio[i];
@@ -70,7 +69,7 @@ if (!loc.match(/^https?\:\/\/(?:\w+\.)?youtube(?:-nocookie)?\.com(?:\:80)?\/watc
           vidStop(autoPlay);
           autoPlay.currentTime = 0;
           nodeRefresh(autoPlay);
-        } else autoPlay.oncanplay = autoPlay.onplay = function vidStopper() {vidStop(autoPlay);};
+        } else autoPlay.oncanplay = autoPlay.onplay = vidStopper;
       }
     }
   };
